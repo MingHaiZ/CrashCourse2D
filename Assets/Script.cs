@@ -1,15 +1,14 @@
 using UnityEngine;
 
-public class Script : MonoBehaviour
+public class Script : Entity
 {
-    private Rigidbody2D rb;
     private float xInput;
-    private Animator animator;
+
+    [Header("Move Info")]
     [SerializeField] private float speed;
+
     [SerializeField] private float jumpForce;
 
-    private int FlipDir = 1;
-    private bool facingRight = true;
 
     [Header("Dash Info")]
     [SerializeField] private float dashDuration;
@@ -25,25 +24,17 @@ public class Script : MonoBehaviour
     [SerializeField] private float comboTime = 0.6f;
     private float comboTimeWindow;
 
-    [Header("Collision Info")]
-    [SerializeField] private float groundCheckDistance;
-
-    [SerializeField] private LayerMask whatIsGround;
-    private bool isGrounded;
-
-    // Start is called before the first frame update
-    void Start()
+    protected override void Start()
     {
-        rb = GetComponent<Rigidbody2D>();
-        animator = GetComponentInChildren<Animator>();
+        base.Start();
     }
 
     // Update is called once per frame
-    void Update()
+    protected override void Update()
     {
+        base.Update();
         Movement();
         CheckInput();
-        CollisionChecks();
         dashTime -= Time.deltaTime;
         dashCoolDownTime -= Time.deltaTime;
         comboTimeWindow -= Time.deltaTime;
@@ -52,10 +43,6 @@ public class Script : MonoBehaviour
         FlipController();
     }
 
-    private void CollisionChecks()
-    {
-        isGrounded = Physics2D.Raycast(transform.position, Vector2.down, groundCheckDistance, whatIsGround);
-    }
 
     private void Movement()
     {
@@ -120,12 +107,6 @@ public class Script : MonoBehaviour
         animator.SetInteger("ComboCounter", comboCounter);
     }
 
-    private void Flip()
-    {
-        FlipDir *= -1;
-        facingRight = !facingRight;
-        transform.Rotate(0, FlipDir * 180, 0);
-    }
 
     private void FlipController()
     {
@@ -139,11 +120,7 @@ public class Script : MonoBehaviour
         }
     }
 
-    private void OnDrawGizmos()
-    {
-        Gizmos.DrawLine(transform.position,
-            new Vector3(transform.position.x, transform.position.y - groundCheckDistance));
-    }
+    
 
 
     public void AttackOver()
